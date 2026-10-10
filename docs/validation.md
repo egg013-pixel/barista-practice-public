@@ -11,3 +11,7 @@
 GitHub Pages 경로(`/barista-practice-public/`)로 생성된 정적 배포 파일을 로컬 HTTP 서버에서 실제 Chromium으로 열어, 시작 3D·시험장 3D·내장 피드백·단계 전환·교사용 기록 링크·직접 새로고침·기간·CSV·삭제·원본 저장 키 보존·모바일 가로 넘침 없음·서버 API 요청 없음까지 추가 검증했습니다.
 
 GitHub 연결이 새 저장소 생성 및 Pages 관리 요청을 Resource not accessible by integration으로 거절했습니다. 새 공개 저장소 생성·연결 및 Pages 활성화 전에는 예정 공유 주소가 동작하지 않습니다.
+
+최종 게시 완료: 새 공개 저장소가 생성된 것을 확인한 뒤 main(39d7fac)과 gh-pages(5a0147a)를 업로드했습니다. Pages가 활성화됐으며 공유 주소와 admin/ 모두 HTTP 200입니다. 공개 사이트에서 31개 정적 파일을 내려받아 로컬 배포본과 SHA-256이 모두 일치함을 확인했습니다. /api/sheets는 404이며 교사용 페이지에 Sheets 연결 안내/재전송 버튼이 없습니다.
+
+기존 저장소 main은 3abf50b로 유지됐으며 기존 Vercel 주소도 HTTP 200입니다. 기존 private 저장소에는 복사본 백업을 위한 share-no-sheets 브랜치만 추가했습니다.

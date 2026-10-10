@@ -1,5 +1,7 @@
 # 차근차근 바리스타 — 독립 공유용
 
+공유 링크: https://egg013-pixel.github.io/barista-practice-public/
+
 원본 보존 버전: egg013-pixel/barista-practice-app @ 3abf50b.
 
 글 대본·3D 시험장·11단계 음성 및 타자 연습·심사위원 안내·피드백·이어하기·교사용 기간 조회/삭제·CSV 다운로드를 유지합니다.
@@ -14,7 +16,7 @@ Google Sheets 자동 전송·재전송·전송 대기 표시를 제거했습니�
 
 `npm ci` 후 `PAGES_BASE_PATH=/barista-practice-public npm run build`로 정적 파일을 `out/`에 생성합니다. `out/`의 내용을 `.nojekyll`과 함께 `gh-pages` 브랜치의 루트에 게시합니다. 저장소 Settings → Pages → Deploy from a branch → gh-pages → /(root) → Save를 선택합니다.
 
-예정 주소: https://egg013-pixel.github.io/barista-practice-public/ (Pages가 활성화되고 배포 완료 후 사용 가능).
+배포 주소: https://egg013-pixel.github.io/barista-practice-public/ (배포 완료, 로그인 없이 접속 가능).
 
 ## 로컬 개발
 
