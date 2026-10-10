@@ -1,0 +1,6 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {simulatorActions,currentAction,completeAction,actionsComplete} from '../data/simulator';
+test('대사 단계는 동작 없이 진행하고 물·음료·정리는 동작 완료를 확인',()=>{for(const id of [1,2,3,4])assert.equal(actionsComplete(id,[]),true);for(const id of [5,6,7,8,9,10,11])assert.equal(actionsComplete(id,[]),false);});
+test('동작 순서를 건너뛰거나 중복 실행할 수 없음',()=>{assert.deepEqual(completeAction(7,[],'espresso-extract'),[]);const one=completeAction(7,[],'espresso-grind');assert.equal(currentAction(7,one)?.id,'espresso-tamp');assert.deepEqual(completeAction(7,one,'espresso-grind'),one);});
+test('물과 에스프레소·카푸치노 두 잔 제조 후 정리까지 진행',()=>{let completed:string[]=[];for(let step=1;step<=11;step++){for(const a of simulatorActions[step]){assert.equal(currentAction(step,completed)?.id,a.id);completed=completeAction(step,completed,a.id);}assert.equal(actionsComplete(step,completed),true);}assert.ok(completed.includes('water-serve'));assert.ok(completed.includes('espresso-serve'));assert.ok(completed.includes('milk-steam'));assert.ok(completed.includes('cappuccino-serve'));assert.ok(completed.includes('clean-wipe'));assert.equal(new Set(completed).size,completed.length);});
