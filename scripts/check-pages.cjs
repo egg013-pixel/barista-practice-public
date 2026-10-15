@@ -14,6 +14,7 @@ const {chromium,expect}=require('@playwright/test');
   await expect(page).toHaveURL(new URL('privacy/',base).href);
   await expect(page.getByRole('heading',{name:'개인정보처리방침',exact:true})).toBeVisible();
   await expect(page.getByText('현재 앱의 동작을 설명하는 검토 중 안내입니다.',{exact:false})).toBeVisible();
+  await expect(page.getByText('문의처: 블로그 ‘오늘도 배우는 특수교사’ 운영자 ‘특수샘 혜윰’',{exact:true})).toBeVisible();
   await page.reload();await expect(page.getByRole('heading',{name:'개인정보처리방침',exact:true})).toBeVisible();
   await page.getByRole('link',{name:'연습 화면으로'}).click();
   await page.getByRole('button',{name:/2. 3D 시험장 연습/}).click();
