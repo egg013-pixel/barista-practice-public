@@ -67,7 +67,7 @@ export default function PracticeApp() {
  const elapsed=session?Math.round((new Date(session.completedAt||new Date()).getTime()-new Date(session.startedAt).getTime())/1000):0;
  const visibleRecords=session?records.filter(r=>r.studentName===session.student.name&&r.studentNumber===session.student.number):records;
  return <div className="app-shell">
-   <header className="site-header"><Link href="/" className="brand"><span className="brand-mark"><Coffee size={26}/></span><span>차근차근 <strong>바리스타</strong><small>한마디씩, 자신 있게</small></span></Link><Link href="/admin" className="teacher-link"><BookOpen size={17}/>교사용 기록</Link></header>
+   <header className="site-header"><Link href="/" className="brand"><span className="brand-mark"><Coffee size={26}/></span><span>차근차근 <strong>바리스타</strong><small>한마디씩, 자신 있게</small>{view==='welcome'&&<small className="brand-credit">by 특수샘 혜윰</small>}</span></Link><Link href="/admin" className="teacher-link"><BookOpen size={17}/>교사용 기록</Link></header>
    <main ref={heading} tabIndex={-1} className={`main-content ${view==='welcome'?'welcome-main':view==='practice'&&session?.mode==='simulator'?'simulator-main':''}`}>
    {error&&<div className="notice" role="alert">{error}</div>}
    {view==='welcome'&&<WelcomeExperience mode={mode} onModeChange={setMode} name={name} onNameChange={setName} number={number} onNumberChange={setNumber} onBegin={begin} resume={resume} onResume={continuePractice}/>}
