@@ -83,6 +83,6 @@ export default function PracticeApp() {
    <div className="history-list">{visibleRecords.slice().reverse().map(r=><article key={r.recordId}><div><strong>{r.step}단계 · {r.stepTitle}</strong><span>{symbols[r.evaluation]} {resultLabels[r.evaluation]}</span></div><p>{r.recognizedText}</p><small>{r.attempt}번째 말하기 · {new Date(r.timestamp).toLocaleString('ko-KR')} · 기기에 저장됨</small></article>)}</div>
    <button className="button primary" onClick={()=>setView(session?.completedAt?'complete':'welcome')}>돌아가기</button></section>}
    </main>
-   <footer className="site-footer"><span><Coffee size={15}/>작은 연습이 만드는 큰 자신감</span><span>바리스타 2급 실기 연습</span></footer>
+   <footer className="site-footer"><span><Coffee size={15}/>작은 연습이 만드는 큰 자신감</span><span><Link className="privacy-policy-link" href="/privacy/">개인정보처리방침</Link></span></footer>
  </div>;
 }

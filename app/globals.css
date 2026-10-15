@@ -239,3 +239,6 @@ input.record-check{width:19px;height:19px;min-height:0;padding:0;accent-color:va
 .admin-delete-confirm{background:#fff5e9;border:1px solid #d6b68c;border-radius:18px;padding:22px;margin-top:18px}
 .admin-delete-confirm h2{font-size:21px}.admin-delete-confirm p{margin:10px 0 18px}.admin-delete-confirm>div{display:flex;gap:10px}
 @media(max-width:600px){.admin-period{gap:10px}.admin-period>div{min-width:130px}.admin-period .button{width:100%}.admin-selection .button{font-size:14px}}
+
+.privacy-policy-link{text-decoration:underline;text-underline-offset:3px;font-weight:600}
+.privacy-document{max-width:850px;margin:32px auto 70px;overflow-wrap:anywhere}.privacy-document h1{font-size:32px;margin-bottom:24px}.privacy-document section{margin-top:28px}.privacy-document h2{font-size:21px;margin-bottom:12px}.privacy-document p+p{margin-top:10px}.privacy-document section>a{display:inline-block;margin-top:12px}

@@ -1,5 +1,6 @@
 'use client';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { ArrowRight, BookOpen, Box, Check, Coffee, Lightbulb, Mic, RotateCcw, ShieldCheck } from 'lucide-react';
 import type { PracticeMode, PracticeSession } from '@/types/practice';
 import styles from './WelcomeExperience.module.css';
@@ -43,7 +44,7 @@ export function WelcomeExperience({ mode, onModeChange, name, onNameChange, numb
    </form>
    {resume && <button className={styles.resume} type="button" onClick={onResume}><RotateCcw size={16}/><span>{resume.student.name} 학생 · {resume.stepIndex + 1}단계 이어하기{resume.mode === 'simulator' ? ' · 3D' : ''}</span><ArrowRight size={16}/></button>}
    <div className={styles.facts}><span><Mic size={16}/>말하거나 입력해요</span><span><Lightbulb size={16}/>힌트가 도와줘요</span><span><Check size={16}/>11단계, 차근차근</span></div>
-   <div className={styles.privacy}><ShieldCheck size={16}/><p>이름과 말한 내용은 이 기기에 저장돼요.<br/>교사용 기록에서 CSV로 내려받을 수 있어요.<br/>브라우저 음성 서비스가 목소리를 처리할 수 있어요.</p></div>
+   <div className={styles.privacy}><ShieldCheck size={16}/><p>이름과 말한 내용은 이 기기에 저장돼요.<br/>교사용 기록에서 CSV로 내려받을 수 있어요.<br/>브라우저 음성 서비스가 목소리를 처리할 수 있어요.<br/><Link className="privacy-policy-link" href="/privacy/">개인정보처리방침 보기</Link></p></div>
   </section>
  </div>;
 }
