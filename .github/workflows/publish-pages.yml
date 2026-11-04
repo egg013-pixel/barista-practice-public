@@ -4,18 +4,14 @@ on:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pages: write
-  id-token: write
 concurrency:
-  group: github-pages
+  group: shared-pages-build
   cancel-in-progress: false
 jobs:
   publish:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,10 +21,20 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm test
       - run: npm run build:pages
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: out
-      - name: Deploy GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      # Keep the existing Pages source and its gh-pages-only environment protection.
+      - name: Publish to the permitted static branch and request a Pages build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          touch out/.nojekyll
+          git fetch origin gh-pages:refs/remotes/origin/gh-pages
+          git worktree add --detach /tmp/shared-pages refs/remotes/origin/gh-pages
+          cd /tmp/shared-pages
+          git rm -r --ignore-unmatch .
+          cp -a "$GITHUB_WORKSPACE/out/." .
+          git add -A
+          if ! git diff --cached --quiet; then
+            git -c user.name=github-actions[bot] -c user.email=41898282+github-actions[bot]@users.noreply.github.com commit -m "Publish $GITHUB_SHA"
+            git push origin HEAD:gh-pages
+          fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds" --silent

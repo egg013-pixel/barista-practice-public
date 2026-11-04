@@ -12,6 +12,6 @@
 
 ## 자동 배포
 
-GitHub Pages Source를 GitHub Actions로 설정하면 `.github/workflows/publish-pages.yml`이 main 변경 때 내장 평가 테스트 → 정적 빌드 → Pages 배포를 실행합니다. Actions에서 수동 실행할 수도 있습니다. 소스 수정만 하고 푸시하지 않으면 배포되지 않습니다.
+현재 GitHub Pages의 Source는 Deploy from a branch → gh-pages → /(root)입니다. `.github/workflows/publish-pages.yml`이 main 변경 때 내장 평가 테스트 → 정적 빌드 → 허용된 gh-pages 브랜치 업데이트 → Pages 빌드 요청을 실행합니다. 기존 gh-pages 전용 배포 보호 규칙을 유지합니다. Actions에서 수동 실행할 수도 있습니다. 소스를 main에 푸시해야 자동 반영되며, 작업 공간에서 수정만 한 상태는 배포되지 않습니다.
 
 `npm ci` 후 `npm run dev`로 로컬 개발, `npm test`, `npm run test:e2e`로 검증합니다. `npm run build:pages`는 `/barista-practice-public` 경로의 정적 파일을 `out/`에 생성합니다. API 키는 필요하지 않습니다.
