@@ -39,8 +39,6 @@
 .fields input::placeholder{color:#b4a593}
 .start{width:100%;margin-top:16px;min-height:54px;border:1px solid #624127;background:linear-gradient(110deg,#725036,#50341f);border-radius:11px;box-shadow:0 5px 12px #5a3e2414;display:flex;align-items:center;justify-content:space-between;padding:13px 18px;color:#fff7e9;font-weight:700;font-size:16px;transition:box-shadow .2s,transform .2s}
 .start:hover{box-shadow:0 7px 15px #5a3e242b;transform:translateY(-1px)}
-.resume{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #dccbb2;border-radius:10px;background:#f6efe3;color:#886643;font-size:12px;padding:10px;margin-top:11px;line-height:1.6;min-height:42px}
-.resume>span{flex:1;text-align:center}
 .facts{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;border-top:1px solid #eae0d1;margin-top:25px;padding-top:16px}
 .facts>span{font-size:10px;display:flex;align-items:center;gap:4px;color:#917b60;white-space:nowrap}
 .facts svg{width:13px;height:13px;color:#a3845b}

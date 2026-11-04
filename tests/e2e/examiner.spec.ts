@@ -22,11 +22,11 @@ test('심사위원은 단계마다 한 번 안내하고 마이크 전에 멈춘�
     } });
   });
   await page.goto('/');
-  await page.getByLabel('학생 이름').fill('음성 테스트');
-  await page.getByLabel('수험번호', { exact: true }).fill('3');
+
+
   await page.getByRole('button', { name: '연습 시작하기' }).click();
   const spoken = () => page.evaluate(() => (window as unknown as { examinerCalls: string[] }).examinerCalls.filter(c => c.startsWith('speak:')));
-  await expect.poll(spoken).toEqual(['speak:인사하고, 수험번호와 이름을 말해보세요.:Microsoft InJoon']);
+  await expect.poll(spoken).toEqual(['speak:인사하고, 가상의 수험번호와 이름으로 자기소개해보세요.:Microsoft InJoon']);
   await page.getByRole('button', { name: /힌트 보기/ }).click();
   await page.getByRole('button', { name: '다시 말하기', exact: true }).click();
   expect(await spoken()).toHaveLength(1);
@@ -38,6 +38,6 @@ test('심사위원은 단계마다 한 번 안내하고 마이크 전에 멈춘�
   await page.getByRole('button', { name: '말하기', exact: true }).click();
   await expect(page.getByRole('button', { name: '심사위원 음성 끄기' })).toBeDisabled();
   expect(await page.evaluate(() => (window as unknown as { examinerCalls: string[] }).examinerCalls.slice(-2))).toEqual(['cancel', 'microphone']);
-  await page.getByRole('button', { name: /잠시 쉬기/ }).click();
+  await page.getByRole('button', { name: /연습을 끝내고 처음 화면으로/ }).click();
   expect(await page.evaluate(() => (window as unknown as { examinerCalls: string[] }).examinerCalls.at(-1))).toBe('cancel');
 });

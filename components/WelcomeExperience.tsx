@@ -1,8 +1,8 @@
 'use client';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { ArrowRight, BookOpen, Box, Check, Coffee, Lightbulb, Mic, RotateCcw, ShieldCheck } from 'lucide-react';
-import type { PracticeMode, PracticeSession } from '@/types/practice';
+import { ArrowRight, BookOpen, Box, Check, Coffee, Lightbulb, Mic, ShieldCheck } from 'lucide-react';
+import type { PracticeMode } from '@/types/practice';
 import styles from './WelcomeExperience.module.css';
 
 const CoffeeHero3D = dynamic(() => import('./CoffeeHero3D'), { ssr: false, loading: () => <CoffeeStill /> });
@@ -12,15 +12,9 @@ function CoffeeStill() {
 interface Props {
  mode: PracticeMode;
  onModeChange: (mode: PracticeMode) => void;
- name: string;
- onNameChange: (name: string) => void;
- number: string;
- onNumberChange: (number: string) => void;
  onBegin: () => void;
- resume: PracticeSession | null;
- onResume: () => void;
 }
-export function WelcomeExperience({ mode, onModeChange, name, onNameChange, number, onNumberChange, onBegin, resume, onResume }: Props) {
+export function WelcomeExperience({ mode, onModeChange, onBegin }: Props) {
  return <div className={styles.experience}>
   <section className={styles.hero} aria-labelledby="welcome-title">
    <div className={styles.heroCopy}>
@@ -39,12 +33,12 @@ export function WelcomeExperience({ mode, onModeChange, name, onNameChange, numb
     <button type="button" aria-pressed={mode === 'simulator'} className={`${styles.mode} ${mode === 'simulator' ? styles.selected : ''}`} onClick={() => onModeChange('simulator')}><span className={styles.modeIcon}><Box size={23}/></span><span><strong>2. 3D 시험장 연습</strong><small>1인칭으로 만들고 서빙해요</small></span><span className={styles.modeCheck}>{mode === 'simulator' && <Check size={14}/>}</span></button>
    </fieldset>
    <form className={styles.form} onSubmit={event => { event.preventDefault(); onBegin(); }}>
-    <div className={styles.fields}><div><label htmlFor="student-name">학생 이름</label><input id="student-name" value={name} onChange={event => onNameChange(event.target.value)} placeholder="이름을 적어주세요" autoComplete="off" maxLength={50} required/></div><div><label htmlFor="student-number">수험번호</label><input id="student-number" value={number} onChange={event => onNumberChange(event.target.value)} placeholder="예: 3" inputMode="numeric" pattern="[0-9]{1,4}" maxLength={4} required/></div></div>
+
     <button className={styles.start} type="submit"><span>연습 시작하기</span><ArrowRight size={21}/></button>
    </form>
-   {resume && <button className={styles.resume} type="button" onClick={onResume}><RotateCcw size={16}/><span>{resume.student.name} 학생 · {resume.stepIndex + 1}단계 이어하기{resume.mode === 'simulator' ? ' · 3D' : ''}</span><ArrowRight size={16}/></button>}
+
    <div className={styles.facts}><span><Mic size={16}/>말하거나 입력해요</span><span><Lightbulb size={16}/>힌트가 도와줘요</span><span><Check size={16}/>11단계, 차근차근</span></div>
-   <div className={styles.privacy}><ShieldCheck size={16}/><p>이름과 말한 내용은 이 기기에 저장돼요.<br/>교사용 기록에서 CSV로 내려받을 수 있어요.<br/>브라우저 음성 서비스가 목소리를 처리할 수 있어요.<br/><Link className="privacy-policy-link" href="/privacy/">개인정보처리방침 보기</Link></p></div>
+   <div className={styles.privacy}><ShieldCheck size={16}/><p>이름·수험번호 입력 없이 바로 시작해요.<br/>연습 내용은 저장하지 않으며 새로고침하면 사라져요.<br/>브라우저 음성 서비스가 목소리를 처리할 수 있어요.<br/><Link className="privacy-policy-link" href="/privacy/">개인정보처리방침 보기</Link></p></div>
   </section>
  </div>;
 }

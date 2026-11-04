@@ -38,6 +38,6 @@ export function VoiceRecorder({text,onText,onSubmit,onRetry,disabled,hasResult,o
       <button className="button quiet" disabled={disabled||listening} onClick={()=>{onRetry();setMessage('');setManual(false);}}><RotateCcw size={18}/>다시 말하기</button>
       <button className="button quiet" disabled={disabled||listening} onClick={()=>{if(hasResult)onRetry();setManual(true);setMessage('');}}><Keyboard size={18}/>직접 입력하기</button>
     </div>
-    <p className="privacy-note">음성 파일은 저장하지 않아요. 말한 내용만 연습 기록에 남아요.</p>
+    <p className="privacy-note">음성과 대사는 저장하지 않아요. 현재 연습 화면에서만 사용해요.</p>
   </div>;
 }

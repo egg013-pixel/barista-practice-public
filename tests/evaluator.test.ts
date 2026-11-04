@@ -1,8 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {baristaScript,personalizeStep} from '../data/baristaScript';
+import {baristaScript} from '../data/baristaScript';
 import {evaluate,normalizeSpeech} from '../lib/evaluator';
-const step=(id:number)=>personalizeStep(baristaScript[id-1],{name:'김하늘',number:'3'});
+const step=(id:number)=>baristaScript[id-1];
 const cases:Array<[number,string,string]>=[
  [4,'아라비카 팔십에 로부스타 이십 들어간 중배전 원두입니다.','excellent'],
  [4,'아라비카 80 로부스타 20입니다.','good'],
@@ -36,8 +36,8 @@ const cases:Array<[number,string,string]>=[
 ];
 for(const [id,text,expected] of cases)test(`${id}단계: ${text||'(빈 입력)'}`,()=>assert.equal(evaluate(text,step(id)).result,expected));
 test('숫자·단위·띄어쓰기 정규화',()=>{assert.equal(normalizeSpeech('아라비카 팔십 퍼센트 로부스타 이십 프로 두 잔'),normalizeSpeech('아라비카 80% 로부스타 20% 2잔'));});
-test('11개 단계 모두 비어 있는 발화를 통과시키지 않음',()=>{for(const s of baristaScript)assert.equal(evaluate('',personalizeStep(s,{name:'김하늘',number:'3'})).result,'retry');});
+test('11개 단계 모두 비어 있는 발화를 통과시키지 않음',()=>{for(const s of baristaScript)assert.equal(evaluate('',s).result,'retry');});
 test('피드백 JSON 구조와 짧은 비판 없는 문장',()=>{for(const s of baristaScript){const e=evaluate('연습 중입니다',s);assert.ok(e.feedback.length<150);assert.ok(!/오답|틀렸|실패/.test(e.feedback));assert.ok(Array.isArray(e.missingKeywords));}});
 test('PDF 기준 순서와 원문 비율',()=>{assert.deepEqual(baristaScript.map(s=>s.part),[1,1,1,1,1,2,2,2,2,2,2]);assert.match(step(4).referenceText,/아라비카 80%, 로부스타 20%/);});
 
-test('한글 수험번호를 조사와 혼동하지 않음',()=>{const s=personalizeStep(baristaScript[0],{name:'김하늘',number:'2'});const result=evaluate('안녕하세요 수험번호 김하늘입니다',s);assert.ok(result.missingKeywords.includes('번호'));});
+test('자기소개는 사전 등록한 실명이나 번호를 요구하지 않음',()=>{assert.equal(evaluate('안녕하세요 수험번호 88번 가상학생입니다',baristaScript[0]).result,'excellent');assert.equal(evaluate('안녕하세요',baristaScript[0]).result,'retry');});

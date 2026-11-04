@@ -4,11 +4,11 @@ const pdf1 = '바리스타 대본 쓰기 학습지.pdf';
 const pdf2 = '바리스타 행동 및 대사.pdf';
 export const baristaScript: BaristaStep[] = [
   {
-    id:1, part:1, title:'인사 및 수험정보', instruction:'인사하고, 수험번호와 이름을 말해보세요.',
+    id:1, part:1, title:'인사 및 수험정보', instruction:'인사하고, 가상의 수험번호와 이름으로 자기소개해보세요.',
     action:'미소를 지으며 심사위원을 바라보고 당당하고 명확한 목소리로 인사합니다.',
-    referenceText:'안녕하십니까. 수험번호 ○번, ○○○입니다.',
-    requiredGroups:[group('인사',['안녕','반갑습니다']),group('수험번호',['수험번호','수험 번호']),group('번호',['{{number}}']),group('이름',['{{name}}'])],
-    optionalKeywords:[], hint:['인사','수험번호','내 번호','내 이름'], evaluationNote:'학생이 입력한 이름과 번호를 확인합니다. 자연스러운 인사를 인정합니다.', source:pdf1
+    referenceText:'안녕하십니까. 수험번호 1번, 연습생입니다.',
+    requiredGroups:[group('인사',['안녕','반갑습니다']),group('수험번호',['수험번호','수험 번호']),group('자기소개',['입니다','이라고','라고','이름'])],
+    optionalKeywords:[], hint:['인사','가상의 수험번호','가상의 이름'], evaluationNote:'실제 이름과 번호를 요구하지 않습니다. 가상의 정보로 인사와 자기소개를 연습합니다.', source:pdf1
   },
   {
     id:2, part:1, title:'바리스타 시작 계기', instruction:'바리스타 공부를 시작한 이유를 말해보세요.',
@@ -81,7 +81,3 @@ export const baristaScript: BaristaStep[] = [
     hint:['마치겠습니다'], evaluationNote:'네, 이상으로, 시험을 등의 앞말은 자유롭게 허용합니다.', source:pdf2, timestamp:'14:04'
   }
 ];
-export function personalizeStep(step: BaristaStep, student: {name:string;number:string}): BaristaStep {
-  return {...step, referenceText: step.id === 1 ? `안녕하십니까. 수험번호 ${student.number}번, ${student.name}입니다.` : step.referenceText,
-    requiredGroups: step.requiredGroups.map(g => ({...g, anyOf:g.anyOf.map(k=>k.replace('{{name}}',student.name).replace('{{number}}',student.number))}))};
-}
