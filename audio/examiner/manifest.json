@@ -2,85 +2,87 @@
   "model": "Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice",
   "revision": "85e237c12c027371202489a0ec509ded67b5e4b5",
   "license": "Apache-2.0",
-  "speaker": "Uncle_Fu",
+  "speaker": "Aiden",
+  "voice_profile": "aiden-gentle-v1",
+  "postprocess": "loudnorm I=-20 LUFS TP=-3 dB LRA=7; 10ms fade-in",
   "language": "Korean",
   "clips": [
     {
       "step": 1,
       "text": "인사하고, 가상의 수험번호와 이름으로 자기소개해보세요.",
       "file": "step-01.wav",
-      "seconds": 6.8,
-      "sha256": "b9536ecc338f393226553de117532fa321c70cff5a3a37739fdc155f81661437"
+      "seconds": 4.32,
+      "sha256": "c9f8786d3841096c8d3800d4cfb3b2150b394112b5b7d8dfcea3de0775dc2011"
     },
     {
       "step": 2,
       "text": "바리스타 공부를 시작한 이유를 말해보세요.",
       "file": "step-02.wav",
-      "seconds": 4.88,
-      "sha256": "bfd9c0700ad8deadf861544a94af7b729dacfd9a09ec31cceeccb9aef8e85b8b"
+      "seconds": 3.92,
+      "sha256": "eb6ad1be87b226be1e40c0ab2475c8071e3d9bff222e62e0a1e4982cad529376"
     },
     {
       "step": 3,
       "text": "앞으로 어떤 바리스타가 되고 싶은지 말해보세요.",
       "file": "step-03.wav",
-      "seconds": 5.12,
-      "sha256": "68a35bb80aa3fd66e86ecc9a48e13d0cb3b80b390bd42c30a6c0255f76764781"
+      "seconds": 3.68,
+      "sha256": "5d488eef3345b544d9deae191b7d3a4e92767d1101aa3827f9c7b7da4bae6c80"
     },
     {
       "step": 4,
       "text": "오늘 사용할 원두의 종류와 비율을 소개해보세요.",
       "file": "step-04.wav",
-      "seconds": 6.48,
-      "sha256": "fad31ff7585d481c778e566e98746699f93c51c0cd7d8d4251d61eafa9c84cce"
+      "seconds": 4.08,
+      "sha256": "ec77241463259f0d782ef1c18527d561dde102193981d721a6fc75f2953f6457"
     },
     {
       "step": 5,
       "text": "물을 서빙하겠다는 말을 해보세요.",
       "file": "step-05.wav",
-      "seconds": 5.28,
-      "sha256": "9a2a56c0ec7008df7b490975925cc2ba63a7757fcd388773acbe75e2ed4f6bdb"
+      "seconds": 2.48,
+      "sha256": "39e09b07a37368695cc12c92caa4d53af5c1001448a6b07de86923417f953bb8"
     },
     {
       "step": 6,
       "text": "물을 내려놓으며 정중하게 말해보세요.",
       "file": "step-06.wav",
-      "seconds": 4.4,
-      "sha256": "5b270926b294bbfa68ef7a504b084ec9272d6530322ea078a377a6613a4fdce6"
+      "seconds": 3.76,
+      "sha256": "f9bdca4f394439283dc6b8fb928396652d6fb7929c53ba9c1df73fb165704c65"
     },
     {
       "step": 7,
       "text": "첫 번째 음료의 이름, 잔 수, 맛과 특징을 소개해보세요.",
       "file": "step-07.wav",
-      "seconds": 6.88,
-      "sha256": "d9b0d6030bedf2c00bb9d071c43f958309fd4a14f51034557d0a754b6ad25432"
+      "seconds": 4.8,
+      "sha256": "1eec4ce7963c48e325687b0aba880b7438a8fc14663b6190a125f5e0741711f1"
     },
     {
       "step": 8,
       "text": "에스프레소 두 잔을 서빙하며 말해보세요.",
       "file": "step-08.wav",
-      "seconds": 4.64,
-      "sha256": "8d5e3521cfec5ce5918eff7713affab234aff54795cd41dc45e13787cf20b0dc"
+      "seconds": 3.12,
+      "sha256": "347814c280164d44e7251d57fb4a3975cb8eef5e9703f5771d0bb8a069ae6870"
     },
     {
       "step": 9,
       "text": "두 번째 음료의 이름, 잔 수, 맛과 특징을 소개해보세요.",
       "file": "step-09.wav",
-      "seconds": 7.92,
-      "sha256": "9a3d0312e9805911c7582c9829341c85678cd2e18b886109deeff4c21a04a1b3"
+      "seconds": 5.44,
+      "sha256": "a31ea0399bdaa80c1e9e03fc1737c7ba692fa8fe2c2a7ec37a53377c1f481f39"
     },
     {
       "step": 10,
       "text": "카푸치노 두 잔을 서빙하며 말해보세요.",
       "file": "step-10.wav",
-      "seconds": 5.6,
-      "sha256": "9140dcb994b3157aec3e8065c4cd0ae67ad62938da6dc7379c63a65d39f7c3ce"
+      "seconds": 5.44,
+      "sha256": "c8261ce2c42d0f0180cf0d70ee47986dbc152571f05ea566463f6b50ae3572a0"
     },
     {
       "step": 11,
       "text": "정리를 마치고 시험 종료를 말해보세요.",
       "file": "step-11.wav",
-      "seconds": 4.8,
-      "sha256": "d09a5cda17efc6d73f9ca26c02b9453724cc3a840510a714ee2c4b1cee61415b"
+      "seconds": 2.88,
+      "sha256": "b6072b599c6c87bfe6140ec3e9096c93a6d7979e2f7207858e04b25ce6640c79"
     }
   ]
 }
