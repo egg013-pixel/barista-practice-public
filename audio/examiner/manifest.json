@@ -1,0 +1,86 @@
+{
+  "model": "Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice",
+  "revision": "85e237c12c027371202489a0ec509ded67b5e4b5",
+  "license": "Apache-2.0",
+  "speaker": "Uncle_Fu",
+  "language": "Korean",
+  "clips": [
+    {
+      "step": 1,
+      "text": "인사하고, 가상의 수험번호와 이름으로 자기소개해보세요.",
+      "file": "step-01.wav",
+      "seconds": 6.8,
+      "sha256": "b9536ecc338f393226553de117532fa321c70cff5a3a37739fdc155f81661437"
+    },
+    {
+      "step": 2,
+      "text": "바리스타 공부를 시작한 이유를 말해보세요.",
+      "file": "step-02.wav",
+      "seconds": 4.88,
+      "sha256": "bfd9c0700ad8deadf861544a94af7b729dacfd9a09ec31cceeccb9aef8e85b8b"
+    },
+    {
+      "step": 3,
+      "text": "앞으로 어떤 바리스타가 되고 싶은지 말해보세요.",
+      "file": "step-03.wav",
+      "seconds": 5.12,
+      "sha256": "68a35bb80aa3fd66e86ecc9a48e13d0cb3b80b390bd42c30a6c0255f76764781"
+    },
+    {
+      "step": 4,
+      "text": "오늘 사용할 원두의 종류와 비율을 소개해보세요.",
+      "file": "step-04.wav",
+      "seconds": 6.48,
+      "sha256": "fad31ff7585d481c778e566e98746699f93c51c0cd7d8d4251d61eafa9c84cce"
+    },
+    {
+      "step": 5,
+      "text": "물을 서빙하겠다는 말을 해보세요.",
+      "file": "step-05.wav",
+      "seconds": 5.28,
+      "sha256": "9a2a56c0ec7008df7b490975925cc2ba63a7757fcd388773acbe75e2ed4f6bdb"
+    },
+    {
+      "step": 6,
+      "text": "물을 내려놓으며 정중하게 말해보세요.",
+      "file": "step-06.wav",
+      "seconds": 4.4,
+      "sha256": "5b270926b294bbfa68ef7a504b084ec9272d6530322ea078a377a6613a4fdce6"
+    },
+    {
+      "step": 7,
+      "text": "첫 번째 음료의 이름, 잔 수, 맛과 특징을 소개해보세요.",
+      "file": "step-07.wav",
+      "seconds": 6.88,
+      "sha256": "d9b0d6030bedf2c00bb9d071c43f958309fd4a14f51034557d0a754b6ad25432"
+    },
+    {
+      "step": 8,
+      "text": "에스프레소 두 잔을 서빙하며 말해보세요.",
+      "file": "step-08.wav",
+      "seconds": 4.64,
+      "sha256": "8d5e3521cfec5ce5918eff7713affab234aff54795cd41dc45e13787cf20b0dc"
+    },
+    {
+      "step": 9,
+      "text": "두 번째 음료의 이름, 잔 수, 맛과 특징을 소개해보세요.",
+      "file": "step-09.wav",
+      "seconds": 7.92,
+      "sha256": "9a3d0312e9805911c7582c9829341c85678cd2e18b886109deeff4c21a04a1b3"
+    },
+    {
+      "step": 10,
+      "text": "카푸치노 두 잔을 서빙하며 말해보세요.",
+      "file": "step-10.wav",
+      "seconds": 5.6,
+      "sha256": "9140dcb994b3157aec3e8065c4cd0ae67ad62938da6dc7379c63a65d39f7c3ce"
+    },
+    {
+      "step": 11,
+      "text": "정리를 마치고 시험 종료를 말해보세요.",
+      "file": "step-11.wav",
+      "seconds": 4.8,
+      "sha256": "d09a5cda17efc6d73f9ca26c02b9453724cc3a840510a714ee2c4b1cee61415b"
+    }
+  ]
+}
