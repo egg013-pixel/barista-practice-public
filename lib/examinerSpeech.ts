@@ -18,7 +18,7 @@ export function speakExaminerInstruction(stepId:number,onError?:()=>void,userGes
  const play=()=>{
   if(token!==generation||!enabled)return;
   audio??=new Audio();const current=audio;
-  current.src=speechAsset(`/audio/examiner/step-${String(stepId).padStart(2,'0')}.wav`);
+  current.src=speechAsset(`/audio/examiner/step-${String(stepId).padStart(2,'0')}.wav?voice=aiden-gentle-v1`);
   current.preload='auto';current.onerror=()=>{if(token===generation)onError?.();};
   void current.play().catch(error=>{if(token===generation&&error?.name!=='AbortError')onError?.();});
  };
