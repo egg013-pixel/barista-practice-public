@@ -1,7 +1,8 @@
+import {appPath} from './paths';
 import {test,expect,type Page,type Locator} from '@playwright/test';
 import {simulatorActions} from '../../data/simulator';
 const speeches=['안녕하세요 수험번호 3번 김하늘입니다','커피를 배우고 싶었어요','위로를 주는 커피를 만들고 싶어요','아라비카 팔십 로부스타 이십 중배전입니다','먼저 물을 서빙해 드릴게요','실례하겠습니다','에스프레소 두 잔 크레마가 풍부하고 고소한 향이 좋아요','실례합니다 에스프레소 두 잔 준비했습니다 맛있게 드세요','카푸치노 두 잔 우유 거품이 부드럽고 단맛이 좋아요','실례합니다 카푸치노 두 잔 준비했습니다 맛있게 드세요','네 마치겠습니다'];
-async function start(page:Page){await page.route('**/api/sheets',route=>route.fulfill({json:{configured:false,success:false}}));await page.goto('/');await page.getByRole('button',{name:/2. 3D 시험장 연습/}).click();await page.getByRole('button',{name:'연습 시작하기'}).click();await expect(page.locator('.exam-scene canvas')).toBeVisible({timeout:20000});}
+async function start(page:Page){await page.route('**/api/sheets',route=>route.fulfill({json:{configured:false,success:false}}));await page.goto(appPath('/'));await page.getByRole('button',{name:/2. 3D 시험장 연습/}).click();await page.getByRole('button',{name:'연습 시작하기'}).click();await expect(page.locator('.exam-scene canvas')).toBeVisible({timeout:20000});}
 async function insideViewport(locator:Locator){
  await expect(locator).toBeVisible();
  await expect(locator).toBeInViewport({ratio:1});
@@ -33,12 +34,8 @@ test('데스크톱 한 화면에서 시험장과 오른쪽 대사 패널로 말�
  await page.emulateMedia({reducedMotion:'reduce'});
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>{
-  class MockRecognition {
-   lang='';continuous=false;interimResults=false;onresult:((e:unknown)=>void)|null=null;onerror:((e:unknown)=>void)|null=null;onend:(()=>void)|null=null;
-   start(){setTimeout(()=>this.onresult?.({resultIndex:0,results:[{isFinal:true,0:{transcript:'안녕하세요 수험번호 3번 김하늘입니다'}}]}),30);}
-   stop(){this.onend?.();}abort(){this.onend?.();}
-  }
-  Object.defineProperty(window,'SpeechRecognition',{value:MockRecognition});
+  class MockWorker{onmessage:((event:{data:unknown})=>void)|null=null;onerror=null;postMessage(data:{id:number;type:string}){setTimeout(()=>this.onmessage?.({data:{id:data.id,type:data.type==='prepare'?'ready':'result',text:'안녕하세요 수험번호 3번 김하늘입니다'}}),10);}terminate(){this.onmessage=null;}}
+  Object.defineProperty(window,'Worker',{value:MockWorker});
  });
  await page.setViewportSize({width:1440,height:1000});await start(page);
  const scene=page.locator('.exam-scene'),canvas=scene.locator('canvas');
@@ -52,8 +49,10 @@ test('데스크톱 한 화면에서 시험장과 오른쪽 대사 패널로 말�
  await withoutPageOverflow(page);
  await page.getByRole('button',{name:'말하기',exact:true}).click();
  await insideViewport(page.getByRole('button',{name:'말하기 마치기',exact:true}));
- await expect(page.getByText(speeches[0],{exact:true})).toBeVisible();
+ // Collect a real fake-device audio packet before stopping MediaRecorder.
+ await page.waitForTimeout(1200);
  await page.getByRole('button',{name:'말하기 마치기',exact:true}).click();
+ await expect(page.getByText(speeches[0],{exact:true})).toBeVisible();
  await page.getByRole('button',{name:'말한 내용 확인하기',exact:true}).click();
  await expect(page.getByRole('heading',{name:'아주 좋아요!',exact:true})).toBeVisible();
  await insideViewport(page.getByRole('button',{name:'다음 단계',exact:true}));

@@ -1,9 +1,10 @@
+import {appPath} from './paths';
 import {test,expect} from '@playwright/test';
 
 test('커피 3D가 있는 시작 화면에서 키보드로 모드를 선택하고 정보 입력 없이 연습 시작',async({page})=>{
  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
  await page.route('**/api/sheets',route=>route.fulfill({json:{configured:false,success:false}}));
- await page.setViewportSize({width:1440,height:1000});await page.goto('/');
+ await page.setViewportSize({width:1440,height:1000});await page.goto(appPath('/'));
  // Software WebGL startup is separate from the individual interaction assertions.
  await expect(page.getByTestId('coffee-hero').locator('canvas')).toBeVisible({timeout:20000});
  const script=page.getByRole('button',{name:/1. 글 대본 연습/});
@@ -28,7 +29,7 @@ test('WebGL을 사용할 수 없는 모바일에서도 커피 대체 화면과 �
   }});
  });
  await page.route('**/api/sheets',route=>route.fulfill({json:{configured:false,success:false}}));
- await page.setViewportSize({width:390,height:844});await page.goto('/');
+ await page.setViewportSize({width:390,height:844});await page.goto(appPath('/'));
  await expect(page.getByTestId('coffee-hero-fallback')).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 

@@ -38,7 +38,7 @@ export function WelcomeExperience({ mode, onModeChange, onBegin }: Props) {
    </form>
 
    <div className={styles.facts}><span><Mic size={16}/>말하거나 입력해요</span><span><Lightbulb size={16}/>힌트가 도와줘요</span><span><Check size={16}/>11단계, 차근차근</span></div>
-   <div className={styles.privacy}><ShieldCheck size={16}/><p>이름·수험번호 입력 없이 바로 시작해요.<br/>연습 내용은 저장하지 않으며 새로고침하면 사라져요.<br/>브라우저 음성 서비스가 목소리를 처리할 수 있어요.<br/><Link className="privacy-policy-link" href="/privacy/">개인정보처리방침 보기</Link></p></div>
+   <div className={styles.privacy}><ShieldCheck size={16}/><p>이름·수험번호 입력 없이 바로 시작해요.<br/>연습 내용은 저장하지 않으며 새로고침하면 사라져요.<br/>음성은 기기 안에서 인식하고, 안내는 AI 고정 음성으로 들려줘요.<br/><Link className="privacy-policy-link" href="/privacy/">개인정보처리방침 보기</Link></p></div>
   </section>
  </div>;
 }

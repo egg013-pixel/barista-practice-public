@@ -1,53 +1,28 @@
-let pending: ReturnType<typeof setTimeout> | undefined;
-let removeVoiceListener: (() => void) | undefined;
-let enabled = true;
-
-export function examinerVoiceEnabled() { return enabled; }
-export function stopExaminerSpeech() {
-  clearTimeout(pending);
-  pending = undefined;
-  removeVoiceListener?.();
-  removeVoiceListener = undefined;
-  if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+import {speechAsset} from './speechModels';
+let pending:ReturnType<typeof setTimeout>|undefined;
+let audio:HTMLAudioElement|null=null;
+let generation=0;
+let enabled=true;
+export function examinerVoiceEnabled(){return enabled;}
+export function stopExaminerSpeech(){
+ generation++;clearTimeout(pending);pending=undefined;
+ if(audio){audio.onerror=null;audio.onended=null;audio.pause();audio.removeAttribute('src');audio.load();}
 }
-export function setExaminerVoiceEnabled(value: boolean) {
-  enabled = value;
-  if (!value) stopExaminerSpeech();
-}
-
-/** OS voice availability differs: prefer a Korean male voice, then Korean. */
-export function chooseExaminerVoice(voices: SpeechSynthesisVoice[]) {
-  const korean = voices.filter(voice => /^ko(?:[-_]|$)/i.test(voice.lang));
-  return korean.find(voice => /InJoon|Hyunsu|Hyunwoo|male\b|남성|남자/i.test(voice.name) && !/female/i.test(voice.name))
-    ?? korean.find(voice => voice.default) ?? korean[0];
-}
-
-export function speakExaminerInstruction(text: string, onError?: () => void) {
-  stopExaminerSpeech();
-  if (!enabled || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-  const synthesis = window.speechSynthesis;
-  let spoken = false;
-  let active = true;
-  const speak = () => {
-    if (spoken || !enabled || !active) return;
-    spoken = true;
-    clearTimeout(pending);
-    removeVoiceListener?.();
-    removeVoiceListener = undefined;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ko-KR';
-    utterance.voice = chooseExaminerVoice(synthesis.getVoices()) ?? null;
-    utterance.rate = 0.92;
-    utterance.pitch = 0.95;
-    utterance.onerror = event => {
-      if (event.error !== 'interrupted' && event.error !== 'canceled') onError?.();
-    };
-    synthesis.speak(utterance);
-  };
-  // Some browsers load voices asynchronously. Cancellation also removes this
-  // listener, so a late voice list cannot start playback over the microphone.
-  const voicesChanged = () => { if (chooseExaminerVoice(synthesis.getVoices())) speak(); };
-  synthesis.addEventListener('voiceschanged', voicesChanged);
-  removeVoiceListener = () => { active = false; synthesis.removeEventListener('voiceschanged', voicesChanged); };
-  pending = setTimeout(speak, chooseExaminerVoice(synthesis.getVoices()) ? 0 : 1000);
+export function setExaminerVoiceEnabled(value:boolean){enabled=value;if(!value)stopExaminerSpeech();}
+/** Fixed synthetic Korean male prompts generated locally with Qwen3-TTS. */
+export function speakExaminerInstruction(stepId:number,onError?:()=>void,userGesture=false){
+ stopExaminerSpeech();
+ if(!enabled||typeof window==='undefined')return;
+ if(!Number.isInteger(stepId)||stepId<1||stepId>11){onError?.();return;}
+ const token=generation;
+ const play=()=>{
+  if(token!==generation||!enabled)return;
+  audio??=new Audio();const current=audio;
+  current.src=speechAsset(`/audio/examiner/step-${String(stepId).padStart(2,'0')}.wav`);
+  current.preload='auto';current.onerror=()=>{if(token===generation)onError?.();};
+  void current.play().catch(error=>{if(token===generation&&error?.name!=='AbortError')onError?.();});
+ };
+ // Deferred automatic playback survives React Strict Mode's mount/cleanup cycle.
+ // Explicit user retries play immediately to satisfy mobile autoplay rules.
+ if(userGesture)play();else pending=setTimeout(play,0);
 }

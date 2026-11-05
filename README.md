@@ -15,3 +15,16 @@
 현재 GitHub Pages의 Source는 Deploy from a branch → gh-pages → /(root)입니다. `.github/workflows/publish-pages.yml`이 main 변경 때 내장 평가 테스트 → 정적 빌드 → 허용된 gh-pages 브랜치 업데이트 → Pages 빌드 요청을 실행합니다. 기존 gh-pages 전용 배포 보호 규칙을 유지합니다. Actions에서 수동 실행할 수도 있습니다. 소스를 main에 푸시해야 자동 반영되며, 작업 공간에서 수정만 한 상태는 배포되지 않습니다.
 
 `npm ci` 후 `npm run dev`로 로컬 개발, `npm test`, `npm run test:e2e`로 검증합니다. `npm run build:pages`는 `/barista-practice-public` 경로의 정적 파일을 `out/`에 생성합니다. API 키는 필요하지 않습니다.
+
+## 음성 모델 (2026-11)
+
+- TTS: Qwen3-TTS-12Hz-0.6B-CustomVoice, 공식 2026년 공개 모델, Uncle_Fu 남성 프리셋의 한국어 안내 11개를 사전 생성하여 재생합니다. 런타임 TTS 서버나 학생 음성 복제는 없습니다. Apache-2.0, 체크포인트 85e237c12c027371202489a0ec509ded67b5e4b5.
+- STT: OpenAI Whisper 계열의 large-v3-turbo(지원 WebGPU 기기, 4비트) / small(WebAssembly CPU, 8비트). 주 음성 인식은 기기 내부 웹 워커에서 처리하며 OS/브라우저 클라우드 음성 인식으로 자동 전환하지 않습니다. 모델 파일만 Hugging Face에서 내려받습니다. 모델은 선택 시점의 고정 리비전으로 로드합니다.
+- 처음 음성 기능을 사용할 때 약 250~770MB를 내려받을 수 있습니다. 준비 상태·취소·30초 녹음 제한·직접 입력 대체를 제공합니다. 실행 속도는 기기 성능에 따라 달라집니다. 인식한 내용을 확인하고 직접 입력으로 수정할 수 있습니다.
+- 녹음·대사·진행은 저장하지 않습니다. 모델은 열린 페이지 메모리에서 재사용하며 앱이 CacheStorage/IndexedDB에 모델을 보관하지 않습니다. 정적 파일 HTTP 캐시는 브라우저 설정을 따릅니다. 모델 다운로드 제공자가 접속 정보를 처리할 수 있으므로 방침에도 반영했습니다.
+- `NEXT_PUBLIC_SPEECH_MODEL_HOST`는 학교가 신뢰하는 자체 모델 미러를 사용할 때만 지정하는 선택적 빌드 설정입니다. 기본값은 https://huggingface.co/ 입니다. 모델 미러를 바꾸면 공개 안내도 실제 제공자에 맞게 확인해야 합니다.
+- 안내 문구 변경 시 `scripts/generate-examiner-audio.py`로 다시 생성하고 파일을 검토해야 합니다. 생성 환경은 별도 Python 가상환경의 qwen-tts 0.1.1, CPU torch/torchaudio 2.8 및 공식 의존성입니다. 모델 자체(약 2.4GB)는 저장소에 포함하지 않습니다.
+
+공식 출처: https://github.com/QwenLM/Qwen3-TTS · https://github.com/openai/whisper · https://huggingface.co/onnx-community/whisper-large-v3-turbo · https://huggingface.co/onnx-community/whisper-small
+
+모델/런타임 라이선스는 public/audio/examiner/LICENSE-QWEN.txt와 public/licenses에 있습니다. 이 안내가 앱 자체의 이용 허락 조건을 변경하지는 않습니다.

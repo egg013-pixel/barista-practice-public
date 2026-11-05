@@ -1,38 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chooseExaminerVoice, speakExaminerInstruction, stopExaminerSpeech } from '../lib/examinerSpeech';
-
-test('한국어 남성을 우선하고 없으면 한국어 기본 음성을 고른다', () => {
- const voice = (name:string,lang:string,defaultVoice=false) => ({name,lang,default:defaultVoice} as SpeechSynthesisVoice);
- const female=voice('Korean female','ko-KR',true), male=voice('Microsoft InJoon','ko-KR');
- assert.equal(chooseExaminerVoice([voice('English male','en-US'),female,male]),male);
- assert.equal(chooseExaminerVoice([female]),female);
- assert.equal(chooseExaminerVoice([voice('English male','en-US')]),undefined);
-});
-
-test('마이크가 안내를 취소하면 늦은 음성 목록과 타이머도 재생하지 않는다', t => {
+import {speakExaminerInstruction,stopExaminerSpeech,setExaminerVoiceEnabled} from '../lib/examinerSpeech';
+test('고정 Qwen 음성은 단계 파일을 재생하고, 취소된 자동 재생은 시작하지 않음',async t=>{
  t.mock.timers.enable({apis:['setTimeout']});
- let listener:(()=>void)|undefined;
- let spoken=0;
- let available=false;
- const previous=Object.getOwnPropertyDescriptor(globalThis,'window');
- Object.defineProperty(globalThis,'window',{configurable:true,value:{speechSynthesis:{
-  getVoices:()=>available?[{lang:'ko-KR',name:'InJoon'}]:[], cancel(){}, speak(){spoken++;},
-  addEventListener(_event:string,fn:()=>void){listener=fn;},
-  removeEventListener(){listener=undefined;}
- }}});
- try {
-  speakExaminerInstruction('인사해 주세요.');
-  const delayed=listener;
-  stopExaminerSpeech();
-  assert.equal(listener,undefined);
-  available=true;
-  delayed?.();
-  t.mock.timers.tick(1500);
-  assert.equal(spoken,0);
- } finally {
-  stopExaminerSpeech();
-  if(previous)Object.defineProperty(globalThis,'window',previous);
-  else Reflect.deleteProperty(globalThis,'window');
- }
+ const previous=['window','Audio'].map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)] as const);
+ const played:string[]=[];let pauses=0;
+ class MockAudio{src='';preload='';onerror=null;onended=null;play(){played.push(this.src);return Promise.resolve();}pause(){pauses++;}load(){}removeAttribute(){this.src='';}}
+ Object.defineProperty(globalThis,'window',{configurable:true,value:{}});Object.defineProperty(globalThis,'Audio',{configurable:true,value:MockAudio});
+ try{
+  speakExaminerInstruction(1);stopExaminerSpeech();t.mock.timers.tick(1);assert.equal(played.length,0);
+  speakExaminerInstruction(2);t.mock.timers.tick(1);assert.deepEqual(played,['/audio/examiner/step-02.wav']);
+  stopExaminerSpeech();assert.ok(pauses>0);
+  setExaminerVoiceEnabled(false);speakExaminerInstruction(3);t.mock.timers.tick(1);assert.equal(played.length,1);
+  setExaminerVoiceEnabled(true);speakExaminerInstruction(4,undefined,true);assert.equal(played.at(-1),'/audio/examiner/step-04.wav');
+ }finally{stopExaminerSpeech();setExaminerVoiceEnabled(true);for(const[key,descriptor]of previous){if(descriptor)Object.defineProperty(globalThis,key,descriptor);else Reflect.deleteProperty(globalThis,key);}}
 });
