@@ -28,3 +28,9 @@
 공식 출처: https://github.com/QwenLM/Qwen3-TTS · https://github.com/openai/whisper · https://huggingface.co/onnx-community/whisper-large-v3-turbo · https://huggingface.co/onnx-community/whisper-small
 
 모델/런타임 라이선스는 public/audio/examiner/LICENSE-QWEN.txt와 public/licenses에 있습니다. 이 안내가 앱 자체의 이용 허락 조건을 변경하지는 않습니다.
+
+## 심사위원 3D 자산
+
+심사위원은 앱 안에 포함한 약 5.6MB의 실제 GLB 모델입니다. MakeHuman CC0 인체 메시, MRT의 CC0 Suit3 재킷·셔츠, culturalibre/swift502의 CC0 헤어를 수정하고 안경·손 자세·재질을 구성했습니다. 인물 이미지를 붙인 배경이 아니며 외부 아바타 서비스에 접속하지 않습니다.
+
+재생성: `blender -b -t 4 --python scripts/build-examiner-model.py`. 출처와 라이선스: `public/models/examiner/NOTICE.md`, 재현용 메시: `scripts/assets/`. 빌드 시 GLB 형식과 해시를 확인합니다. 모델 로딩 실패 시에도 직접 입력 연습은 계속할 수 있습니다.

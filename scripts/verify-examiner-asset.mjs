@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+const root=new URL('../public/models/examiner/',import.meta.url);
+const manifest=JSON.parse(await readFile(new URL('manifest.json',root),'utf8'));
+const data=await readFile(new URL(manifest.file,root));
+if(data.toString('utf8',0,4)!=='glTF'||data.readUInt32LE(4)!==2||data.readUInt32LE(8)!==data.length)throw Error('Invalid examiner GLB');
+if(data.length!==manifest.bytes||createHash('sha256').update(data).digest('hex')!==manifest.sha256)throw Error('Examiner model manifest mismatch');
+const doc=JSON.parse(data.toString('utf8',20,20+data.readUInt32LE(12)));
+if(!doc.meshes?.length||!doc.scenes?.length)throw Error('Examiner model has no scene');
+if([...doc.buffers||[],...doc.images||[]].some(row=>row.uri&&!row.uri.startsWith('data:')))throw Error('Examiner must be self contained');
+console.log('Verified local anatomical examiner GLB:',Math.round(data.length/1024),'KB');

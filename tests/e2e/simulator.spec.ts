@@ -2,7 +2,7 @@ import {appPath} from './paths';
 import {test,expect,type Page,type Locator} from '@playwright/test';
 import {simulatorActions} from '../../data/simulator';
 const speeches=['안녕하세요 수험번호 3번 김하늘입니다','커피를 배우고 싶었어요','위로를 주는 커피를 만들고 싶어요','아라비카 팔십 로부스타 이십 중배전입니다','먼저 물을 서빙해 드릴게요','실례하겠습니다','에스프레소 두 잔 크레마가 풍부하고 고소한 향이 좋아요','실례합니다 에스프레소 두 잔 준비했습니다 맛있게 드세요','카푸치노 두 잔 우유 거품이 부드럽고 단맛이 좋아요','실례합니다 카푸치노 두 잔 준비했습니다 맛있게 드세요','네 마치겠습니다'];
-async function start(page:Page){await page.route('**/api/sheets',route=>route.fulfill({json:{configured:false,success:false}}));await page.goto(appPath('/'));await page.getByRole('button',{name:/2. 3D 시험장 연습/}).click();await page.getByRole('button',{name:'연습 시작하기'}).click();await expect(page.locator('.exam-scene canvas')).toBeVisible({timeout:20000});}
+async function start(page:Page){await page.route('**/api/sheets',route=>route.fulfill({json:{configured:false,success:false}}));await page.goto(appPath('/'));await page.getByRole('button',{name:/2. 3D 시험장 연습/}).click();await page.getByRole('button',{name:'연습 시작하기'}).click();await expect(page.locator('.exam-scene canvas')).toBeVisible({timeout:20000});await expect(page.locator('.exam-scene')).toHaveAttribute('data-character-status','ready',{timeout:45000});}
 async function insideViewport(locator:Locator){
  await expect(locator).toBeVisible();
  await expect(locator).toBeInViewport({ratio:1});

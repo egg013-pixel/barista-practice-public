@@ -244,3 +244,5 @@ input.record-check{width:19px;height:19px;min-height:0;padding:0;accent-color:va
 .privacy-document{max-width:850px;margin:32px auto 70px;overflow-wrap:anywhere}.privacy-document h1{font-size:32px;margin-bottom:24px}.privacy-document section{margin-top:28px}.privacy-document h2{font-size:21px;margin-bottom:12px}.privacy-document p+p{margin-top:10px}.privacy-document section>a{display:inline-block;margin-top:12px}
 
 .brand .brand-credit{font-size:11px;letter-spacing:.2px;margin-top:3px;color:var(--brown)}
+
+.scene-asset-status{position:absolute;left:50%;top:42%;transform:translateX(-50%);padding:12px 20px;border-radius:16px;background:rgba(255,249,236,.94);color:#514333;font-size:14px;pointer-events:none;}

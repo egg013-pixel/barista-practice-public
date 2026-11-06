@@ -1,12 +1,14 @@
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import examinerAsset from '@/public/models/examiner/manifest.json';
 import type {SimulatorAction} from '@/data/simulator';
 
 type Point = [number, number, number];
 type Target = SimulatorAction['target'];
 
-/** All room assets are local procedural models; no external model/texture downloads. */
+/** Room geometry and the anatomical examiner GLB are served by this app, never third parties. */
 export function createExamRoom(scene: THREE.Scene, camera: THREE.Camera) {
  const geometries = new Map<string, THREE.BufferGeometry>();
  const materials = new Set<THREE.Material>();
@@ -63,13 +65,13 @@ export function createExamRoom(scene: THREE.Scene, camera: THREE.Camera) {
  });
  woodTexture.wrapS = woodTexture.wrapT = THREE.RepeatWrapping; woodTexture.repeat.set(2,1);
  const floorTexture = texture(512,512,ctx => {
-  ctx.fillStyle='#d3c9b8';ctx.fillRect(0,0,512,512);
+  ctx.fillStyle='#cbb99c';ctx.fillRect(0,0,512,512);
   for(let i=0;i<8000;i++){ctx.fillStyle=random()>.5?'rgba(255,255,255,.16)':'rgba(74,85,80,.055)';ctx.fillRect(random()*512,random()*512,1.5,1.5);}
   ctx.strokeStyle='#b9ae9d';ctx.lineWidth=3;ctx.strokeRect(1,1,510,510);
  });
  floorTexture.wrapS=floorTexture.wrapT=THREE.RepeatWrapping;floorTexture.repeat.set(12,12);
  const clothTexture = texture(128,128,ctx=>{ctx.fillStyle='#eee8da';ctx.fillRect(0,0,128,128);ctx.strokeStyle='#d2c7b3';ctx.lineWidth=1;for(let i=0;i<128;i+=4){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,128);ctx.moveTo(0,i);ctx.lineTo(128,i);ctx.stroke();}});
- const wood=material({map:woodTexture,roughness:.58}), wall=material({color:'#eee7dc',roughness:.95}), teal=material({color:'#596f62',roughness:.8}), dark=material({color:'#28332d',roughness:.58});
+ const wood=material({map:woodTexture,color:'#ecd0a6',roughness:.62}), wall=material({color:'#ead8bf',roughness:.95}), teal=material({color:'#596f62',roughness:.8}), dark=material({color:'#28332d',roughness:.58});
  const steel=material({color:'#dce1df',metalness:.92,roughness:.2}), steelBrushed=material({color:'#b9bdb5',metalness:.8,roughness:.34}), ceramic=material({color:'#fff8e9',roughness:.2}), black=material({color:'#181f21',roughness:.37});
  const skin=material({color:'#d6ac90',roughness:.7}), jacket=material({color:'#414b49',roughness:.87}), shirt=material({color:'#e9ede8',roughness:.8}), hair=material({color:'#383027',roughness:.88});
  const coffee=material({color:'#552612',roughness:.22}), crema=material({color:'#c79550',roughness:.35}), milkFoam=material({color:'#f8e9c9',roughness:.55});
@@ -133,8 +135,8 @@ export function createExamRoom(scene: THREE.Scene, camera: THREE.Camera) {
  const acoustic=material({color:'#8c7154',roughness:.9});
  box(3.85,2.39,.045,acoustic,[0,2.34,-5.19]);
  for(let i=0;i<27;i++)box(.055,2.36,.025,wood,[-1.82+i*.14,2.34,-5.155],scene,.008);
- box(3.42,1.07,.11,teal,[0,2.93,-5.09],scene,.025);
- placard(['바리스타 실기 평가장','제 1 시험실   ·   응시자 01'],3.26,.91,[0,2.93,-5.027],scene,{heading:'BARISTA  /  PRACTICAL EXAMINATION'});
+ box(3.42,.90,.11,teal,[0,2.73,-5.09],scene,.025);
+ placard(['바리스타 실기 평가장','제 1 시험실   ·   응시자 01'],3.26,.74,[0,2.73,-5.027],scene,{heading:'BARISTA  /  PRACTICAL EXAMINATION'});
  const clock=group([3.85,2.85,-5.15]);const clockRim=cylinder(.32,.32,.05,dark,[0,0,0],clock);clockRim.rotation.x=Math.PI/2;
  const clockFace=cylinder(.294,.294,.012,white,[0,0,.031],clock);clockFace.rotation.x=Math.PI/2;
  for(let i=0;i<12;i++){const angle=i*Math.PI/6;const tick=box(.012,.045,.006,dark,[Math.sin(angle)*.258,Math.cos(angle)*.258,.045],clock);tick.rotation.z=-angle;}
@@ -174,156 +176,35 @@ export function createExamRoom(scene: THREE.Scene, camera: THREE.Camera) {
  for(const x of [-.35,.35]){box(.049,.29,.046,dark,[x,.72,-.02],chair,.014);box(.065,.07,.47,wood,[x,.86,-.015],chair,.027);}
  contact([0,.013,-3.5],1.2,1.24);
  for(const x of [-.27,.27])for(const z of [-.23,.23])limb([x,.05,z],[x,.51,z],.025,steelBrushed,chair);
- const assessor=group([0,0,-3.38]);assessor.name='friendly-examiner-v2';
- // Original, procedural character: continuous sculpted surfaces, adult proportions,
- // tailored clothing and anatomical hands. Every mesh remains real 3D on all views.
- const warmSkin=material({color:'#dfa987',roughness:.7});
- const skinShade=material({color:'#bd8168',roughness:.88});
- const lip=material({color:'#a66658',roughness:.85});
- const blazer=material({color:'#666653',roughness:.94});
- const lapelMat=material({color:'#71705e',roughness:.9});
- const seam=material({color:'#535444',roughness:1});
- const ivory=material({color:'#f1e3cd',roughness:.94});
- const trousers=material({color:'#4e4e43',roughness:.97});
- const brownHair=material({color:'#30251f',roughness:.85});
- const hairHighlight=material({color:'#413027',roughness:.87});
- const eyeWhite=material({color:'#eee5d6',roughness:.48});
- const iris=material({color:'#463226',roughness:.52});
- const pupil=material({color:'#171b17',roughness:.38});
- const frame=material({color:'#4a483e',metalness:.48,roughness:.4});
- // A continuous elliptical loft avoids the snowman/capsule torso silhouette.
- function tailored(key:string,rings:Point[],m:THREE.Material,p:Point){
-  const geo=geometry(key,()=>{
-   const curve=new THREE.CatmullRomCurve3(rings.map(r=>new THREE.Vector3(...r))),pos:number[]=[],uv:number[]=[],idx:number[]=[];
-   const rows=40,cols=48;
-   for(let j=0;j<=rows;j++){const r=curve.getPoint(j/rows);for(let i=0;i<=cols;i++){const a=i/cols*Math.PI*2;pos.push(Math.cos(a)*Math.max(.001,r.x),r.y,Math.sin(a)*Math.max(.001,r.z));uv.push(i/cols,j/rows);}}
-   for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const a=j*(cols+1)+i,b=a+cols+1;idx.push(a,b,a+1,b,b+1,a+1);}
-   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();return g;
-  });return object(geo,m,p,assessor);
- }
- tailored('examiner-tailored-jacket',[[.24,.70,.16],[.27,.84,.17],[.25,1.02,.165],[.28,1.22,.17],[.34,1.35,.13],[.27,1.42,.095],[.087,1.47,.078]],blazer,[0,0,0]);
- tailored('examiner-shirt-front',[[.117,.88,.023],[.135,1.14,.032],[.13,1.32,.032],[.075,1.42,.025]],ivory,[0,0,.16]).receiveShadow=false;
- cylinder(.062,.077,.14,warmSkin,[0,1.49,.018],assessor);
- // Cloth panels follow the chest, with a shaped open collar rather than a bow tie.
- function clothPanel(points:Point[],m:THREE.Material){
-  const shape=new THREE.Shape();points.forEach((p,i)=>i?shape.lineTo(p[0],p[1]):shape.moveTo(p[0],p[1]));shape.closePath();
-  m.side=THREE.DoubleSide;const g=new THREE.ShapeGeometry(shape);const pa=g.attributes.position;
-  for(let i=0;i<pa.count;i++)pa.setZ(i,.213-Math.abs(pa.getX(i))*.12-Math.max(0,pa.getY(i)-1.3)*.1);g.computeVertexNormals();
-  const key='cloth-panel:'+points.map(p=>p.join(',')).join(';');geometries.set(key,g);const panel=object(g,m,[0,0,0],assessor);panel.receiveShadow=false;return panel;
- }
- for(const s of [-1,1]){
-  const pts=(rows:Point[])=>rows.map(([x,y,z])=>[s*x,y,z] as Point);
-  // Front-facing polygon winding must remain consistent across mirrored panels.
-  const panel=(rows:Point[],m:THREE.Material)=>clothPanel(s<0?pts(rows).reverse():pts(rows),m);
-  panel([[.078,1.445,0],[.185,1.37,0],[.146,1.31,0],[.205,1.285,0],[.07,1.03,0],[.095,1.32,0]],lapelMat);
-  panel([[.05,1.46,0],[.105,1.425,0],[.116,1.345,0],[.045,1.39,0],[.025,1.43,0]],ivory);
-  tube([[s*.17,1.37,.186],[s*.134,1.31,.191],[s*.194,1.284,.19],[s*.073,1.04,.199]],.002,seam,assessor);
-  tube([[s*.217,1.15,.151],[s*.237,.88,.153],[s*.19,.74,.158]],.0018,seam,assessor);
-  // Chest welt pocket and waist pockets sit flush against the jacket.
-  tube([[s*.16,.94,.171],[s*.233,.955,.156]],.005,lapelMat,assessor);
- }
- tube([[-.225,1.245,.147],[-.185,1.24,.161],[-.145,1.244,.174]],.004,lapelMat,assessor);
- for(const y of [1.27,1.17,1.07])sphere(.0055,material({color:'#cab99c',roughness:.8}),[0,y,.191],assessor,[1,1,.5]);
- for(const y of [.98,.875])sphere(.009,seam,[.052,y,.181],assessor,[1,1,.5]);
- // Face is a sculpted oval: narrow chin, cheek volume and a continuous forehead.
- const headPartsStart=assessor.children.length;
- const faceCenter:Point=[0,1.73,.035];
- const faceGeo=geometry('examiner-sculpted-face-v2',()=>{
-  const g=new THREE.SphereGeometry(1,56,40),p=g.attributes.position;
-  for(let i=0;i<p.count;i++){
-   const sx=p.getX(i),sy=p.getY(i),sz=p.getZ(i);
-   const jaw=sy<-.15?1-.13*Math.pow((-sy-.15)/.85,.8):1;
-   let x=sx*.148*jaw,y=sy<-.82?-.16072+(sy+.82)*.09:sy*.196,z=sz*.139;
-   if(sz>0){
-    // Soft cheeks, a recessed eye line and a gently projected chin.
-    z+=.010*Math.exp(-Math.pow((Math.abs(x)-.073)/.04,2)-Math.pow((y+.026)/.045,2));
-    z-=.008*Math.exp(-Math.pow((Math.abs(x)-.058)/.043,2)-Math.pow((y-.035)/.022,2));
-    z+=.008*Math.exp(-Math.pow(y+.145,2)/.0015)*sz;
-   }p.setXYZ(i,x,y,z);
-  }g.computeVertexNormals();return g;
- });object(faceGeo,warmSkin,faceCenter,assessor);
- for(const s of [-1,1]){
-  const ear=sphere(.027,warmSkin,[s*.144,1.72,.023],assessor,[.48,1,.64]);ear.rotation.z=s*-.10;
-  sphere(.017,skinShade,[s*.151,1.72,.035],assessor,[.22,.72,.53]);
-  sphere(.009,warmSkin,[s*.146,1.708,.043],assessor,[.5,.8,.8]);
- }
- // Smaller almond eyes and relaxed upper lids read as attentive, not staring.
- for(const s of [-1,1]){
-  const x=s*.058,z=.164;
-  sphere(.025,eyeWhite,[x,1.765,z],assessor,[1,.30,.23]);
-  sphere(.0095,iris,[x,1.765,z+.007],assessor,[.79,.85,.23]);
-  sphere(.006,pupil,[x,1.765,z+.010],assessor,[.82,1,.25]);
-  sphere(.0023,white,[x-.002,1.769,z+.012],assessor);
-  tube([[x-.026,1.765,z-.001],[x-.013,1.772,z+.002],[x+.009,1.773,z+.003],[x+.026,1.767,z-.002]],.0032,skinShade,assessor);
-  tube([[x-.022,1.76,z-.001],[x,1.755,z+.003],[x+.023,1.761,z-.001]],.0024,warmSkin,assessor);
-  tube([[x-.03,1.794,.156],[x-.011,1.799,.163],[x+.013,1.799,.162],[x+.029,1.794,.155]],.005,brownHair,assessor);
- }
- // Continuous small bridge plus softly rounded nose wings; no protruding ball nose.
- const nose=sphere(.026,warmSkin,[0,1.737,.17],assessor,[.42,1.65,.72]);nose.rotation.x=-.16;
- sphere(.017,warmSkin,[0,1.714,.19],assessor,[.88,.64,.7]);
- for(const s of [-1,1]){sphere(.009,warmSkin,[s*.014,1.709,.178],assessor,[.7,.62,.75]);sphere(.003,skinShade,[s*.009,1.705,.185],assessor,[1,.4,.5]);}
- // Subtle, closed-mouth upward smile and a lower lip instead of a painted dash.
- tube([[-.038,1.675,.15],[-.021,1.665,.164],[0,1.663,.168],[.021,1.665,.164],[.038,1.675,.15]],.0028,lip,assessor);
- tube([[-.021,1.659,.16],[0,1.656,.166],[.021,1.659,.16]],.0033,warmSkin,assessor);
- // Thin oval wire frames, with no opaque lenses hiding the expression.
- for(const s of [-1,1]){const rim=torus(.039,.0025,frame,[s*.059,1.767,.184],assessor);rim.scale.set(1,.73,1);}
- tube([[-.021,1.773,.184],[0,1.779,.187],[.021,1.773,.184]],.0022,frame,assessor);
- for(const s of [-1,1])tube([[s*.098,1.774,.182],[s*.133,1.779,.112],[s*.147,1.755,.025]],.0024,frame,assessor);
- // Scalp cap conforms to the face, with asymmetric swept locks and a visible part.
- const hairCap=geometry('examiner-hair-cap-v2',()=>{
-  const rows=24,cols=64,pos:number[]=[],uv:number[]=[],idx:number[]=[];
-  for(let j=0;j<=rows;j++)for(let i=0;i<=cols;i++){
-   const phi=i/cols*Math.PI*2,front=Math.max(0,Math.sin(phi));
-   const edge=1.72-front*.65+Math.max(0,-Math.sin(phi))*.23+Math.cos(phi)*front*.08,theta=j/rows*edge;
-   pos.push(Math.cos(phi)*Math.sin(theta)*.155,Math.cos(theta)*.207,Math.sin(phi)*Math.sin(theta)*.149-.005);uv.push(i/cols,j/rows);
+ // The examiner is a sculpted anatomical GLB, with real eyelids/lips, hands and tailoring.
+ // Keep loading separate from room batching, so camera/lesson interactions stay available.
+ let disposed=false;
+ const ready=new GLTFLoader().loadAsync((process.env.NEXT_PUBLIC_BASE_PATH||'')+'/models/examiner/'+examinerAsset.file+'?v='+examinerAsset.sha256.slice(0,12)).then(gltf=>{
+  const root=gltf.scene;root.name='anatomical-examiner';root.position.set(0,0,-3.38);root.updateMatrixWorld(true);
+  const groups=new Map<string,{material:THREE.Material;items:THREE.Mesh[]}>();
+  root.traverse(child=>{
+   if(!(child instanceof THREE.Mesh))return;
+   geometries.set('examiner:'+child.geometry.uuid,child.geometry);
+   const ms=Array.isArray(child.material)?child.material:[child.material];
+   for(const mat of ms){materials.add(mat);for(const value of Object.values(mat))if(value instanceof THREE.Texture)textures.add(value);}
+   child.castShadow=true;child.receiveShadow=true;
+   if(!Array.isArray(child.material)){
+    const key=child.material.uuid+':'+Object.keys(child.geometry.attributes).sort().join(',');
+    let batch=groups.get(key);if(!batch){batch={material:child.material,items:[]};groups.set(key,batch);}batch.items.push(child);
+   }
+  });
+  if(disposed){geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());return;}
+  // Merge static parts by material to keep hair strands/buttons from adding draw calls.
+  for(const [key,batch] of groups){
+   if(batch.items.length<2)continue;
+   const parts=batch.items.map(o=>(o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone()).applyMatrix4(o.matrixWorld));
+   const merged=mergeGeometries(parts,false);parts.forEach(g=>g.dispose());if(!merged)continue;
+   geometries.set('examiner-batch:'+key,merged);
+   const mesh=new THREE.Mesh(merged,batch.material);mesh.castShadow=true;mesh.receiveShadow=true;mesh.name='examiner-detail-batch';scene.add(mesh);
+   batch.items.forEach(o=>o.removeFromParent());
   }
-  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const a=j*(cols+1)+i,b=a+cols+1;idx.push(a,a+1,b,b,a+1,b+1);}
-  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();return g;
- });object(hairCap,brownHair,faceCenter,assessor);
- // Swept, tapered ribbons merge into the scalp instead of round helmet blobs.
- function hairLock(points:Point[],width:number,height:number,m:THREE.Material){
-  const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p))),pos:number[]=[],uv:number[]=[],idx:number[]=[];
-  const rows=24,cols=12;
-  for(let j=0;j<=rows;j++){
-   const t=j/rows,p=curve.getPoint(t),tangent=curve.getTangent(t),side=new THREE.Vector3().crossVectors(tangent,new THREE.Vector3(0,0,1)).normalize(),up=new THREE.Vector3().crossVectors(side,tangent).normalize();
-   const taper=.08+.92*Math.pow(Math.sin(Math.PI*t),.55);
-   for(let i=0;i<=cols;i++){const a=i/cols*Math.PI*2,v=p.clone().addScaledVector(side,Math.cos(a)*width*taper).addScaledVector(up,Math.sin(a)*height*taper);pos.push(v.x,v.y,v.z);uv.push(i/cols,t);}
-  }
-  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const a=j*(cols+1)+i,b=a+cols+1;idx.push(a,b,a+1,b,b+1,a+1);}
-  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();geometries.set('hair-lock:'+points[0].join(':'),g);object(g,m,[0,0,0],assessor);
- }
- for(let i=0;i<6;i++){
-  const f=i/5;
-  hairLock([[.067-f*.012,1.895+f*.008,.09-f*.04],[.011-f*.018,1.937-f*.004,.075-f*.015],[-.105-f*.011,1.876-f*.009,.123-f*.016],[-.143,1.826-f*.015,.065-f*.018]],.016+f*.002,.009,i%3===0?hairHighlight:brownHair);
- }
- for(let i=0;i<3;i++)hairLock([[.072+i*.008,1.894,.09-i*.025],[.12+i*.002,1.876-i*.007,.069-i*.022],[.143,1.811,.023-i*.02]],.017,.008,brownHair);
- const headParts=assessor.children.slice(headPartsStart);const headAssembly=group([0,-.032,0],assessor);for(const part of headParts)headAssembly.add(part);
- clothPanel([[-.047,1.447,0],[0,1.367,0],[.047,1.447,0]],warmSkin);
- // Arms bend naturally toward the desk; tapered sleeves and separate cuffs.
- for(const s of [-1,1]){
-  const upper=limb([s*.292,1.345,.005],[s*.395,1.035,.16],.082,blazer,assessor);upper.scale.x=.93;
-  const fore=limb([s*.395,1.035,.16],[s*.263,1.047,.60],.069,blazer,assessor);fore.scale.x=.94;
-  limb([s*.269,1.047,.56],[s*.252,1.047,.625],.051,ivory,assessor);
-  tube([[s*.412,1.061,.164],[s*.385,1.09,.26],[s*.359,1.094,.30]],.0025,seam,assessor);
-  for(let i=0;i<3;i++)sphere(.0055,seam,[s*(.287+i*.008),1.095,.49-i*.025],assessor);
-  const hand=group([s*.25,1.046,.653],assessor);hand.rotation.y=s*-.12;
-  sphere(.052,warmSkin,[0,0,0],hand,[.83,.42,1.07]);
-  // Four fingers plus a thumb, softly curled on the desktop.
-  for(let i=0;i<4;i++){
-   const x=-.029+i*.019,len=[.046,.059,.056,.043][i];
-   limb([x,.004,.029],[x,.001,.029+len],.009,warmSkin,hand);
-   sphere(.010,warmSkin,[x,.009,.032],hand,[1,.65,1.1]);
-   tube([[x-.005,.007,.05],[x+.005,.007,.05]],.0009,skinShade,hand);
-  }
-  limb([-s*.037,.002,-.005],[-s*.059,-.006,.038],.012,warmSkin,hand);
-  sphere(.011,warmSkin,[-s*.058,-.006,.042],hand,[1,.7,1]);
-  // Seated trouser legs and dark brown leather shoes with distinct soles.
-  limb([s*.13,.69,.01],[s*.18,.56,.39],.094,trousers,assessor);
-  limb([s*.18,.55,.39],[s*.18,.13,.39],.066,trousers,assessor);
-  tube([[s*.18,.48,.457],[s*.18,.33,.457],[s*.18,.17,.455]],.0018,seam,assessor);
-  sphere(.075,material({color:'#332b25',roughness:.47}),[s*.18,.092,.472],assessor,[.83,.65,1.68]);
-  box(.125,.023,.235,dark,[s*.18,.044,.476],assessor,.012);
- }
+  scene.add(root);
+ });
  const clipboard=group([.5,1.01,-2.55]);clipboard.rotation.y=-.13;
  box(.54,.02,.4,dark,[0,0,0],clipboard,.018);box(.48,.007,.34,white,[0,.014,0],clipboard);box(.12,.014,.035,steel,[0,.025,-.16],clipboard,.009);
  const rubric=placard(['실기 평가표','대사 · 제조 · 서비스 · 정리'],.45,.3,[0,.019,0],clipboard);rubric.rotation.x=-Math.PI/2;
@@ -482,8 +363,8 @@ box(1.6,.06,.83,black,[0,.035,-.06],machine,.025);
  }
  return {
   // Raycaster does not exclude invisible groups; hidden service objects must be filtered here.
-  get targets(){return targets.filter(o=>o.visible);}, targetPositions, update,
+  get targets(){return targets.filter(o=>o.visible);}, targetPositions, update, ready,
   highlight(target:Target|undefined,enabled:boolean,time:number){marker.visible=!!target&&enabled;if(target){marker.position.set(...targetPositions[target]);marker.scale.setScalar(1+Math.sin(time*2)*.045);marker.userData.target=target;}},
-  dispose(){geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());}
+  dispose(){disposed=true;geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());}
  };
 }
