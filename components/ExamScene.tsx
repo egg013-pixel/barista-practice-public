@@ -68,7 +68,7 @@ export default function ExamScene({view,completed,target,enabled,onActivate,pane
    if(s.view==='judge'){
     // Keep portrait cameras in front of the workbench partition.
     const fitDistance=3.35/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*visibleAspect);
-    desiredPosition.set(visibleAspect>.9?-.62:-.18,1.68,Math.min(1.75,-3.2+Math.max(3.7,fitDistance)));desiredLook.set(0,1.52,-3.2);
+    desiredPosition.set(visibleAspect>.9?-.62:-.18,1.68,Math.min(1.75,-3.2+Math.max(3.35,fitDistance)));desiredLook.set(0,1.52,-3.2);
    }else{
     const focus=s.enabled&&s.target&&s.target!=='table'?room.targetPositions[s.target][0]:2.55;
     const zoom=s.enabled&&s.target&&s.target!=='table';
