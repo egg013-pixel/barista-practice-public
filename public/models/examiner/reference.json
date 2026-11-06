@@ -1,0 +1,11 @@
+{
+  "file": "provided-examiner.spz",
+  "sha256": "da3d11694bb3488d03fb531ba6cfaab675d1adf918c1cfb7d968816a8e65bae5",
+  "bytes": 1806773,
+  "sourceFile": "idol-seed7-262144-be1b0ef4.ply",
+  "sourceSha256": "b1490076127dd8a27b027f480ae592595e66c1a79166f8d82b9ce895f8b94072",
+  "splats": 142648,
+  "source": "User-provided Gaussian Splat model",
+  "processing": "Character background isolation; continuous fine Gaussian spectacle rims preserving original face; lower-leg floor fitting; SPZ compression",
+  "version": "provided-stable-rims-1"
+}

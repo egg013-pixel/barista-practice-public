@@ -1,8 +1,8 @@
 {
   "file": "examiner-v3.glb",
-  "sha256": "f5fe88fa6f5f1ecb5f61466616b9bb3fe31ee1643f8a4c3f05fd8918d51af66a",
-  "bytes": 5913808,
+  "sha256": "f888f97378495ad695b1b0351587dfd27eb82e5f789961a3c68a6640d0518ee3",
+  "bytes": 5788480,
   "source": "MakeHuman/MPFB anatomy; MRT suit; culturalibre/swift502 hair; CC0 source assets",
   "format": "glTF 2.0 binary",
-  "version": "anatomical-1"
+  "version": "mesh-fallback-no-glasses-1"
 }

@@ -9,3 +9,5 @@ Tailored jacket, shirt, cuffs and buttons: Suit3 by MRT / Margaret Toigo, CC0, f
 Swept hair: culturalibre_hair_05 by culturalibre, original by swift502, CC0 / CC-0. Source: https://static.makehumancommunity.org/assets/assetpacks/hair01.html, UUID ca162603-99da-4bff-b6b8-cbc0a67e3c26.
 
 Original adjustments and accessories are built in scripts/build-examiner-model.py. The fitted source geometry is in scripts/assets/. These source-asset notices do not change the app's existing software terms.
+
+Default reference (2026-11-06): owner-supplied `idol-seed7-262144-be1b0ef4.ply`, cropped and processed into `provided-examiner.spz`. Its original-file SHA-256 and processing summary are in `reference.json`. This supplied model is distinct from the CC0 mesh assets above; those notices do not declare a license for the owner's upload. Spark rendering code is MIT-licensed, see public/licenses/SPARK-MIT.txt. The supplied face colors are preserved; continuous fine Gaussian spectacle rims reinforce the reference without aliased triangle-line frames. The mesh fallback has no glasses.

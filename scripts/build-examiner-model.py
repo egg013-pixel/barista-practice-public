@@ -96,15 +96,6 @@ for i,center in enumerate(anatomy['eyes']):
  # Individual eyebrow shapes follow the forehead rather than floating rectangular bars.
  x=e.x
  curve('Soft sculpted brow '+str(i),[(x-.032,-.170,1.812),(x-.016,-.180,1.825),(x+.009,-.181,1.825),(x+.031,-.166,1.816)],.0055,hair,[.12,.9,1,.1])
- # Thin, rounded rectangular glasses, leaving eyebrows visible.
- pts=[]
- for j in range(17):
-  a=j/16*2*math.pi;xx=math.copysign(abs(math.cos(a))**.8,math.cos(a))*.040;zz=math.copysign(abs(math.sin(a))**.9,math.sin(a))*.029
-  pts.append((x+xx,-.196+(xx*xx)*4,1.77+zz))
- curve('Wire glasses rim '+str(i),pts,.002,frame)
-curve('Glasses bridge',[(-.010,-.198,1.778),(0,-.206,1.784),(.010,-.198,1.778)],.0019,frame)
-for s in [-1,1]:curve('Glasses temple '+str(s),[(s*.091,-.192,1.778),(s*.132,-.10,1.783),(s*.137,-.014,1.751)],.0019,frame)
-
 # CC0 sculpted swept hair by culturalibre, original by swift502, fitted to the head.
 with gzip.open(ROOT/'scripts/assets/examiner-hair.json.gz','rt') as f:hairsource=json.load(f)
 hairObject=mesh('Sculpted layered swept hair',[headpoint(Vector(v)) for v in hairsource['vertices']],hairsource['faces'],hair,1)
@@ -169,7 +160,7 @@ bpy.ops.object.select_all(action='DESELECT')
 for ob in models:ob.select_set(True)
 bpy.ops.export_scene.gltf(filepath=str(OUT/'examiner-v3.glb'),export_format='GLB',use_selection=True,export_apply=True,export_animations=False,export_yup=True,export_extras=False)
 asset=OUT/'examiner-v3.glb'
-(OUT/'manifest.json').write_text(json.dumps({'file':asset.name,'sha256':hashlib.sha256(asset.read_bytes()).hexdigest(),'bytes':asset.stat().st_size,'source':'MakeHuman/MPFB anatomy; MRT suit; culturalibre/swift502 hair; CC0 source assets','format':'glTF 2.0 binary','version':'anatomical-1'},indent=2)+'\n')
+(OUT/'manifest.json').write_text(json.dumps({'file':asset.name,'sha256':hashlib.sha256(asset.read_bytes()).hexdigest(),'bytes':asset.stat().st_size,'source':'MakeHuman/MPFB anatomy; MRT suit; culturalibre/swift502 hair; CC0 source assets','format':'glTF 2.0 binary','version':'mesh-fallback-no-glasses-1'},indent=2)+'\n')
 # Save a transparent 3D inspection render (not used as an app background).
 scene=bpy.context.scene;scene.render.engine='CYCLES';scene.cycles.samples=32;scene.cycles.use_denoising=False
 scene.world.color=(.20,.20,.20)

@@ -3,13 +3,14 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import examinerAsset from '@/public/models/examiner/manifest.json';
+import referenceAsset from '@/public/models/examiner/reference.json';
 import type {SimulatorAction} from '@/data/simulator';
 
 type Point = [number, number, number];
 type Target = SimulatorAction['target'];
 
-/** Room geometry and the anatomical examiner GLB are served by this app, never third parties. */
-export function createExamRoom(scene: THREE.Scene, camera: THREE.Camera) {
+/** Room geometry and both examiner assets are served by this app, never third parties. */
+export function createExamRoom(scene: THREE.Scene, camera: THREE.Camera, renderer:THREE.WebGLRenderer, invalidate:()=>void) {
  const geometries = new Map<string, THREE.BufferGeometry>();
  const materials = new Set<THREE.Material>();
  const textures = new Set<THREE.Texture>();
@@ -176,10 +177,10 @@ export function createExamRoom(scene: THREE.Scene, camera: THREE.Camera) {
  for(const x of [-.35,.35]){box(.049,.29,.046,dark,[x,.72,-.02],chair,.014);box(.065,.07,.47,wood,[x,.86,-.015],chair,.027);}
  contact([0,.013,-3.5],1.2,1.24);
  for(const x of [-.27,.27])for(const z of [-.23,.23])limb([x,.05,z],[x,.51,z],.025,steelBrushed,chair);
- // The examiner is a sculpted anatomical GLB, with real eyelids/lips, hands and tailoring.
+ // The provided Gaussian reference is primary; this glasses-free anatomical GLB is the fallback.
  // Keep loading separate from room batching, so camera/lesson interactions stay available.
  let disposed=false;
- const ready=new GLTFLoader().loadAsync((process.env.NEXT_PUBLIC_BASE_PATH||'')+'/models/examiner/'+examinerAsset.file+'?v='+examinerAsset.sha256.slice(0,12)).then(gltf=>{
+ const loadMesh=()=>new GLTFLoader().loadAsync((process.env.NEXT_PUBLIC_BASE_PATH||'')+'/models/examiner/'+examinerAsset.file+'?v='+examinerAsset.sha256.slice(0,12)).then(gltf=>{
   const root=gltf.scene;root.name='anatomical-examiner';root.position.set(0,0,-3.38);root.updateMatrixWorld(true);
   const groups=new Map<string,{material:THREE.Material;items:THREE.Mesh[]}>();
   root.traverse(child=>{
@@ -205,6 +206,27 @@ export function createExamRoom(scene: THREE.Scene, camera: THREE.Camera) {
   }
   scene.add(root);
  });
+ let referenceDispose:(()=>void)|undefined;
+ let characterRenderer:'splat'|'mesh'='mesh';
+ const ready=(async()=>{
+  try{
+   const {SparkRenderer,SplatMesh}=await import('@sparkjsdev/spark');
+   if(disposed)return;
+   const spark=new SparkRenderer({renderer,onDirty:()=>{if(!disposed)invalidate();},maxPixelRadius:96});
+   scene.add(spark);referenceDispose=()=>{spark.removeFromParent();spark.dispose();};
+   const person=new SplatMesh({url:(process.env.NEXT_PUBLIC_BASE_PATH||'')+'/models/examiner/'+referenceAsset.file+'?v='+referenceAsset.sha256.slice(0,12),lod:false,raycastable:false});
+   referenceDispose=()=>{person.removeFromParent();spark.removeFromParent();person.dispose();spark.dispose();};
+   await person.initialized;
+   if(disposed){referenceDispose();return;}
+   person.name='provided-examiner-reference';person.quaternion.set(Math.SQRT1_2,0,Math.SQRT1_2,0);person.scale.setScalar(2.3);person.position.set(0,1.045,-3.12);
+   scene.add(person);characterRenderer='splat';await spark.update({scene,camera});invalidate();
+  }catch{
+   referenceDispose?.();referenceDispose=undefined;
+   if(!disposed){characterRenderer='mesh';await loadMesh();}
+  }
+ })();
+ // Discreet contact beneath the reference's hands, which rest on the same interactive desk.
+ contact([-.20,1.007,-2.65],.21,.14);contact([.20,1.007,-2.65],.21,.14);
  const clipboard=group([.5,1.01,-2.55]);clipboard.rotation.y=-.13;
  box(.54,.02,.4,dark,[0,0,0],clipboard,.018);box(.48,.007,.34,white,[0,.014,0],clipboard);box(.12,.014,.035,steel,[0,.025,-.16],clipboard,.009);
  const rubric=placard(['실기 평가표','대사 · 제조 · 서비스 · 정리'],.45,.3,[0,.019,0],clipboard);rubric.rotation.x=-Math.PI/2;
@@ -363,8 +385,8 @@ box(1.6,.06,.83,black,[0,.035,-.06],machine,.025);
  }
  return {
   // Raycaster does not exclude invisible groups; hidden service objects must be filtered here.
-  get targets(){return targets.filter(o=>o.visible);}, targetPositions, update, ready,
+  get targets(){return targets.filter(o=>o.visible);}, targetPositions, update, ready, get characterRenderer(){return characterRenderer;},
   highlight(target:Target|undefined,enabled:boolean,time:number){marker.visible=!!target&&enabled;if(target){marker.position.set(...targetPositions[target]);marker.scale.setScalar(1+Math.sin(time*2)*.045);marker.userData.target=target;}},
-  dispose(){disposed=true;geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());}
+  dispose(){disposed=true;referenceDispose?.();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());}
  };
 }
